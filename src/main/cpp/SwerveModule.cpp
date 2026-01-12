@@ -68,16 +68,18 @@ void SwerveModule::ConfigModule()
     turnConfig.MotionMagic.MotionMagicExpo_kV = ctre::unit::volts_per_turn_per_second_t(0.12);
     turnConfig.MotionMagic.MotionMagicExpo_kA = ctre::unit::volts_per_turn_per_second_squared_t(0.1);
 
-    m_driveMotor.GetConfigurator().Apply(driveConfig);
-    m_turningMotor.GetConfigurator().Apply(turnConfig);
+    
 
     m_driveMotor.SetNeutralMode(signals::NeutralModeValue::Brake);
     m_turningMotor.SetNeutralMode(signals::NeutralModeValue::Brake);
 
     if(m_driveMotor.GetDeviceID() == 1 || m_driveMotor.GetDeviceID() == 5)
     {
-        m_driveMotor.SetInverted(true);
+        driveConfig.MotorOutput.Inverted = signals::InvertedValue::Clockwise_Positive;    //CHECK THIS - GMS 2026
     }
+
+    m_driveMotor.GetConfigurator().Apply(driveConfig);
+    m_turningMotor.GetConfigurator().Apply(turnConfig);
 
     m_driveMotor.SetPosition(units::angle::turn_t{0});
 }

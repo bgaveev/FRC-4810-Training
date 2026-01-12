@@ -19,7 +19,7 @@
 
 #include <frc/Servo.h>  //Linear Actuator Testing
 
-#include "ctre/Phoenix.h"              // 
+//#include "ctre/Phoenix.h"              //-GMS - Old Phoenix 5 controls
 #include <ctre/phoenix6/TalonFX.hpp>
 
 //-JJB #include <units/units.h>        // Catch-all.  Use individual headers

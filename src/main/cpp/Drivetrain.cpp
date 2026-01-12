@@ -219,7 +219,7 @@ frc::Pose2d Drivetrain::GetBotPose()
     };
 }
 
-void Drivetrain::FollowTrajectory(const choreo::SwerveSample& sample)
+/*void Drivetrain::FollowTrajectory(const choreo::SwerveSample& sample)
 {
     frc::Pose2d pose = GetBotPose();
 
@@ -233,4 +233,4 @@ void Drivetrain::FollowTrajectory(const choreo::SwerveSample& sample)
 
     printf("Trajectory Velocity: X [%f] Y [%f] Omega [%f]\nTrajectory Position: X [%f] Y [%f] Heading [%f]\n", sample.vx, sample.vy, sample.omega, sample.x.value(), sample.y.value(), sample.heading.value());
     DriveFieldRelative(xSpeed, ySpeed, rotSpeed);
-}
+}*/
