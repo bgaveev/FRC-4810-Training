@@ -19,7 +19,7 @@
 #include <ctre/phoenix6/Pigeon2.hpp>
 #include "SwerveModule.h"
 
-#include <choreo/trajectory/Trajectory.h>
+//#include <choreo/trajectory/Trajectory.h> - GMS - Install new Choreo Library
 
 
 #include "RobotIO.h"
@@ -121,7 +121,7 @@ public:
 
     void Stop();
 
-    void FollowTrajectory( const choreo::SwerveSample& sample);
+    //void FollowTrajectory( const choreo::SwerveSample& sample); - GMS - Install new Choreo Library
 
     SwerveModule m_frontLeft{1,2,9};
     SwerveModule m_frontRight{3,4,10};
@@ -198,7 +198,7 @@ private:
     
     void UpdateOdometry();
 
-    void TryAddVisionMeasurement();
+    void TryAddVisionMeasurement(double correctedGyroDegrees);
 
     bool m_bUseCameraMeasurements;
 

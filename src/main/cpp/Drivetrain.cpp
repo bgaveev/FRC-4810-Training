@@ -125,13 +125,10 @@ void Drivetrain::Stop()
 
 void Drivetrain::UpdateOdometry()
 {
-    //- IMPORTANT - Make sure Gyro is CCW positive
+    frc::Rotation2d correctedGyro = -GetGyroRotation2d();
 
-//-GMS - STEP 1 - Get this working properly: Ideal behavior, start robot, drive left 1m, forward 1m, back 1m, right 1m. Make sure report 
-// is 0,0 on translation. Then drive around, making sure it never appears to be going the wrong way or deviating from intended odometry 
-// direction. Test with driver station red and blue 
     m_poseEstimator.Update(
-        GetGyroRotation2d(),
+        correctedGyro,
         {
             m_frontLeft.GetPosition(),
             m_frontRight.GetPosition(),
@@ -139,18 +136,15 @@ void Drivetrain::UpdateOdometry()
             m_backRight.GetPosition()
         }
     );
-
-//-GMS - STEP 2 - Once regular odometry is working, uncomment out below for vision logic
-    //TryAddVisionMeasurement();
+    TryAddVisionMeasurement((double)correctedGyro.Degrees());
 
     m_field.SetRobotPose(GetBotPose());
 }
 
-void Drivetrain::TryAddVisionMeasurement()
+void Drivetrain::TryAddVisionMeasurement(double correctedGyroDegrees)
 {
-    LimelightHelpers::SetRobotOrientation("limelight", (double)GetGyroRotation2d().Degrees(), 0, 0, 0, 0, 0);  //Other 5 values are optional, ommitted for simplicity sake
-//-GMS - Once this is working properly for limelight 4 (orientation matches gyro), uncomment out the below code 
-/*
+    LimelightHelpers::SetRobotOrientation("limelight", (double)GetBotPose().Rotation().Degrees(), 0, 0, 0, 0, 0);  //Other 5 values are optional, ommitted for simplicity sake
+
     // ******************
     // * Megatag 1 code *
     // ******************
@@ -184,9 +178,6 @@ void Drivetrain::TryAddVisionMeasurement()
             mt1_pose.timestampSeconds
         );
     }
-*/
-
-//-GMS - Once Megatag 1 is working, try to get bot running properly with Megatag 2 (below)
 
     // ******************
     // * Megatag 2 code *
@@ -228,10 +219,9 @@ frc::Pose2d Drivetrain::GetBotPose()
     };
 }
 
-void Drivetrain::FollowTrajectory(const choreo::SwerveSample& sample)
+/*void Drivetrain::FollowTrajectory(const choreo::SwerveSample& sample)
 {
-//-GMS - Once Odometry (and preferably limelight) are working properly, uncomment out below code for trajectory following
-    /*frc::Pose2d pose = GetBotPose();
+    frc::Pose2d pose = GetBotPose();
 
     double xFeedback = m_xFeedbackController.Calculate(pose.X().value(), sample.x.value());     // X feedback Speed in m/s
     double yFeedback = m_yFeedbackController.Calculate(pose.Y().value(), sample.y.value());     // Y feedback Speed in m/s
@@ -242,5 +232,5 @@ void Drivetrain::FollowTrajectory(const choreo::SwerveSample& sample)
     double rotSpeed = (double)sample.omega + headingFeedback;
 
     printf("Trajectory Velocity: X [%f] Y [%f] Omega [%f]\nTrajectory Position: X [%f] Y [%f] Heading [%f]\n", sample.vx, sample.vy, sample.omega, sample.x.value(), sample.y.value(), sample.heading.value());
-    DriveFieldRelative(xSpeed, ySpeed, rotSpeed);*/
-}
+    DriveFieldRelative(xSpeed, ySpeed, rotSpeed);
+}*/
