@@ -15,6 +15,8 @@ void Arm::Initialize(RobotIO *p_pRobotIO)
 
     m_pTimeoutTimer = new frc::Timer();
     m_pTimeoutTimer->Reset();
+
+    m_pRobotIO->m_ArmMotor.GetConfigurator().Refresh( m_MotorConfigs );
 }
 
 void Arm::UpdateInputStatus()
@@ -52,12 +54,15 @@ void Arm::Execute()
                 }
 
                 //Apply Motor configs
-
+                 m_MotorConfigs.NeutralMode = NeutralMode::Coast;
+                m_pRobotIO->m_ArmMotor.GetConfigurator().Apply(m_MotorConfigs);
+                
                 //Reset and Start Timer
                 m_pTimeoutTimer->Reset();
                 m_pTimeoutTimer->Start();
 
                 //Set Motor Speed
+                m_pRobotIO->m_ArmMotor.Set( arm::dHomingSpeed );
 
                 //Transition to homing state
                 m_eState = arm::eState::STATE_HOMING;
@@ -71,13 +76,15 @@ void Arm::Execute()
             {
 
                 //Apply Motor configs
-
+                 m_MotorConfigs.NeutralMode = NeutralMode::Coast;
+                m_pRobotIO->m_ArmMotor.GetConfigurator().Apply(m_MotorConfigs);
+                
                 //Reset and Start Timer
                 m_pTimeoutTimer->Reset();
                 m_pTimeoutTimer->Start();
 
                 //Set Motor Speed
-
+                m_pRobotIO->m_ArmMotor.Set( arm::dManualRaiseSpeed );
                 //Transition to Manual raise state
                 m_eState = arm::eState::STATE_MANUAL_RAISE;
             }
@@ -95,13 +102,15 @@ void Arm::Execute()
                 }
 
                 //Apply Motor configs
-
+                 m_MotorConfigs.NeutralMode = NeutralMode::Coast;
+                m_pRobotIO->m_ArmMotor.GetConfigurator().Apply(m_MotorConfigs);
+                
                 //Reset and Start Timer
                 m_pTimeoutTimer->Reset();
                 m_pTimeoutTimer->Start();
 
                 //Set Motor Speed
-
+                m_pRobotIO->m_ArmMotor.Set( arm::dManualLowerSpeed );
                 //Transition to Manual lower state
                 m_eState = arm::eState::STATE_MANUAL_LOWER;
             }
@@ -112,20 +121,23 @@ void Arm::Execute()
 
             else if(m_eCommand == arm::COMMAND_AUTO_RAISE)
             {
-                if(/*Above encoder setpoint*/)
+                if( m_pRobotIO->m_ArmMotor.GetPosition().GetValueAsDouble() >= arm::dAutoRaiseSetpoint )
                 {
                     m_eCommand = arm::COMMAND_NONE;
                     return;
                 }
 
                 //Apply Motor configs
+                 m_MotorConfigs.NeutralMode = NeutralMode::Coast;
+                m_pRobotIO->m_ArmMotor.GetConfigurator().Apply(m_MotorConfigs);
+                
 
                 //Reset and Start Timer
                 m_pTimeoutTimer->Reset();
                 m_pTimeoutTimer->Start();
 
                 //Set Motor Speed
-
+                m_pRobotIO->m_ArmMotor.Set( arm::dAutoRaiseSpeed );
                 //Transition to auto raise state
                 m_eState = arm::eState::STATE_AUTO_RAISE;
             }
@@ -151,8 +163,14 @@ void Arm::Execute()
             if(/*Check Arm Limit Switch */ || bIsTimedOut)
             {
                 // Stop Motors
+                m_pRobotIO->m_ArmMotor.Set( 0 );
+
                 //Enable brake mode
+                m_MotorConfigs.NeutralMode = NeutralMode::Brake;
+                m_pRobotIO->m_ArmMotor.GetConfigurator().Apply(m_MotorConfigs);
+
                 // Reset Encoders
+                m_pRobotIO->m_ArmMotor.SetPosition(units::angle::turn_t{0});
 
                 m_eCommand = arm::COMMAND_NONE;
                 m_eState = arm::eState::STATE_IDLE;
@@ -171,7 +189,11 @@ void Arm::Execute()
             if(m_eCommand == arm::COMMAND_STOP || bIsTimedOut)
             {
                 // Stop Motors
+                m_pRobotIO->m_ArmMotor.Set( 0 );
+
                 //Enable brake mode
+                m_MotorConfigs.NeutralMode = NeutralMode::Brake;
+                m_pRobotIO->m_ArmMotor.GetConfigurator().Apply(m_MotorConfigs);
 
                 m_eCommand = arm::COMMAND_NONE;
                 m_eState = arm::eState::STATE_IDLE;
@@ -190,7 +212,11 @@ void Arm::Execute()
             if(m_eCommand == arm::COMMAND_STOP || /*Check Arm Limit Switch */ || bIsTimedOut)
             {
                 // Stop Motors
+                m_pRobotIO->m_ArmMotor.Set( 0 );
+
                 //Enable brake mode
+                m_MotorConfigs.NeutralMode = NeutralMode::Brake;
+                m_pRobotIO->m_ArmMotor.GetConfigurator().Apply(m_MotorConfigs);
 
                 m_eCommand = arm::COMMAND_NONE;
                 m_eState = arm::eState::STATE_IDLE;
@@ -206,11 +232,15 @@ void Arm::Execute()
             {
                 bIsTimedOut = true;
             }
-            if(/*Check Motor encoder agains setpoint*/ || bIsTimedOut)
+            if(m_pRobotIO->m_ArmMotor.GetPosition().GetValueAsDouble() >= arm::dAutoRaiseSetpoint || bIsTimedOut)
             {
                 // Stop Motors
-                //Enable brake mode
+                m_pRobotIO->m_ArmMotor.Set( 0 );
 
+                //Enable brake mode
+                m_MotorConfigs.NeutralMode = NeutralMode::Brake;
+                m_pRobotIO->m_ArmMotor.GetConfigurator().Apply(m_MotorConfigs);
+                
                 m_eCommand = arm::COMMAND_NONE;
                 m_eState = arm::eState::STATE_IDLE;
             }

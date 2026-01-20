@@ -88,6 +88,7 @@ private:
 
     frc::Timer *m_pTimeoutTimer;
 
-    //Add Motor Configs
+    configs::MotorOutputConfigs m_MotorConfigs;
+    
 
 };
