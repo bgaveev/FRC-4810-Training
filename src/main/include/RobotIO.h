@@ -54,7 +54,9 @@ class RobotIO
 
       // Accessor Methods.
 
-      
+      // BLC - Arm Limit Accessor Method
+      inline bool GetArmLimit()
+         { return{m_ArmLimitSwitch.Get()};  }
 
       // Xbox Controllers
 
@@ -63,4 +65,5 @@ class RobotIO
 
       // Arm Hardware
       hardware::TalonFX m_ArmMotor{ 14 }; 
+      frc::DigitalInput m_ArmLimitSwitch{ 2 };
 };

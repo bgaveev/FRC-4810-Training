@@ -47,14 +47,14 @@ void Arm::Execute()
 
             if(m_eCommand == arm::COMMAND_NONE)
             {
-                if(/*At lower Limit*/)
+                if( m_pRobotIO->GetArmLimit() )
                 {
                     m_eCommand = arm::COMMAND_NONE;
                     return;
                 }
 
                 //Apply Motor configs
-                 m_MotorConfigs.NeutralMode = NeutralMode::Coast;
+                 m_MotorConfigs.NeutralMode = ctre::phoenix6::signals::NeutralModeValue::Coast;
                 m_pRobotIO->m_ArmMotor.GetConfigurator().Apply(m_MotorConfigs);
                 
                 //Reset and Start Timer
@@ -76,7 +76,7 @@ void Arm::Execute()
             {
 
                 //Apply Motor configs
-                 m_MotorConfigs.NeutralMode = NeutralMode::Coast;
+                 m_MotorConfigs.NeutralMode = ctre::phoenix6::signals::NeutralModeValue::Coast;
                 m_pRobotIO->m_ArmMotor.GetConfigurator().Apply(m_MotorConfigs);
                 
                 //Reset and Start Timer
@@ -95,14 +95,14 @@ void Arm::Execute()
 
             else if(m_eCommand == arm::COMMAND_MANUAL_LOWER)
             {
-                if(/*At lower Limit*/)
+                if( m_pRobotIO->GetArmLimit() )
                 {
                     m_eCommand = arm::COMMAND_NONE;
                     return;
                 }
 
                 //Apply Motor configs
-                 m_MotorConfigs.NeutralMode = NeutralMode::Coast;
+                 m_MotorConfigs.NeutralMode = ctre::phoenix6::signals::NeutralModeValue::Coast;
                 m_pRobotIO->m_ArmMotor.GetConfigurator().Apply(m_MotorConfigs);
                 
                 //Reset and Start Timer
@@ -128,7 +128,7 @@ void Arm::Execute()
                 }
 
                 //Apply Motor configs
-                 m_MotorConfigs.NeutralMode = NeutralMode::Coast;
+                 m_MotorConfigs.NeutralMode = ctre::phoenix6::signals::NeutralModeValue::Coast;
                 m_pRobotIO->m_ArmMotor.GetConfigurator().Apply(m_MotorConfigs);
                 
 
@@ -160,13 +160,13 @@ void Arm::Execute()
                 bIsTimedOut = true;
             }
 
-            if(/*Check Arm Limit Switch */ || bIsTimedOut)
+            if( m_pRobotIO->GetArmLimit()  || bIsTimedOut)
             {
                 // Stop Motors
                 m_pRobotIO->m_ArmMotor.Set( 0 );
 
                 //Enable brake mode
-                m_MotorConfigs.NeutralMode = NeutralMode::Brake;
+                m_MotorConfigs.NeutralMode = ctre::phoenix6::signals::NeutralModeValue::Brake;
                 m_pRobotIO->m_ArmMotor.GetConfigurator().Apply(m_MotorConfigs);
 
                 // Reset Encoders
@@ -192,7 +192,7 @@ void Arm::Execute()
                 m_pRobotIO->m_ArmMotor.Set( 0 );
 
                 //Enable brake mode
-                m_MotorConfigs.NeutralMode = NeutralMode::Brake;
+                m_MotorConfigs.NeutralMode = ctre::phoenix6::signals::NeutralModeValue::Brake;
                 m_pRobotIO->m_ArmMotor.GetConfigurator().Apply(m_MotorConfigs);
 
                 m_eCommand = arm::COMMAND_NONE;
@@ -209,13 +209,13 @@ void Arm::Execute()
             {
                 bIsTimedOut = true;
             }
-            if(m_eCommand == arm::COMMAND_STOP || /*Check Arm Limit Switch */ || bIsTimedOut)
+            if(m_eCommand == arm::COMMAND_STOP ||  m_pRobotIO->GetArmLimit()  || bIsTimedOut)
             {
                 // Stop Motors
                 m_pRobotIO->m_ArmMotor.Set( 0 );
 
                 //Enable brake mode
-                m_MotorConfigs.NeutralMode = NeutralMode::Brake;
+                m_MotorConfigs.NeutralMode = ctre::phoenix6::signals::NeutralModeValue::Brake;
                 m_pRobotIO->m_ArmMotor.GetConfigurator().Apply(m_MotorConfigs);
 
                 m_eCommand = arm::COMMAND_NONE;
@@ -238,7 +238,7 @@ void Arm::Execute()
                 m_pRobotIO->m_ArmMotor.Set( 0 );
 
                 //Enable brake mode
-                m_MotorConfigs.NeutralMode = NeutralMode::Brake;
+                m_MotorConfigs.NeutralMode = ctre::phoenix6::signals::NeutralModeValue::Brake;
                 m_pRobotIO->m_ArmMotor.GetConfigurator().Apply(m_MotorConfigs);
                 
                 m_eCommand = arm::COMMAND_NONE;

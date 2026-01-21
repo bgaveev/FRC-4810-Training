@@ -77,5 +77,6 @@ void RobotIO::RobotInit()
 
 void RobotIO::UpdateInputStatus()
 {
-   
+   // BLC - Add arm limit status to Smart Dashboard
+   frc::SmartDashboard::PutBoolean("Arm Limit Switch", GetArmLimit());
 }
